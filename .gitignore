@@ -1,0 +1,6 @@
+# .mat
+*.mat
+*.jpg
+*.png
+*.jpeg
+*.DS_Store
