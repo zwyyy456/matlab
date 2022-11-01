@@ -1,23 +1,4 @@
-% 函数功能：计算速度与位移，将数据变化以图线方式表现出来
-% 
-% 变量：
-% ------
-% 输入变量：
-% is_rm_ave = 控制是否去掉平均值的参数，为0表示不去掉，其他表示去掉
-% dis_flag = 控制是否计算位移的参数，为0表示不计算，为1表示计算
-% m_filter = 使用的滤波类型，为1表示平均值滤波，为2表示中值滤波，为3表示高斯滤波，
-% 其他值表示不滤波
-% 
-% 输出变量：
-% x_vel = x轴速度
-% y_vel = y轴速度
-% z_vel = z轴速度
-% x_dis = x轴位移
-% y_dis = y轴位移
-% z_dis = z轴位移
-
-
-function [res] = imu_get_vel_dis(struct)
+function [res] = weiyi(struct)
     v_x = 0;
     v_y = 0;
     v_z = 0;
@@ -57,9 +38,14 @@ function [res] = imu_get_vel_dis(struct)
         d_z = d_z + res.z_vel(i) / 200 + res.z_vel(i) / 200;
         res.z_dis = [res.z_dis, d_z];
     end
-        
+    subplot(3, 1, 1);
+    set(gca, 'xTick', [0 : 6000 : struct.vec_len]);
+    set(gca, 'xTickLabel', {'0', '1', '2', '3', '4', '5'});
+    ylabel('m/s');
+    title('x轴速度随时间变化的曲线');
         
    
 end
+
 
 

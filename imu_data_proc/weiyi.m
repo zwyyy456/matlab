@@ -1,73 +1,98 @@
-v_x=0;
-v_y=0;
-v_z=0;
+function [res] = weiyi(struct)
+    v_x = 0;
+    v_y = 0;
+    v_z = 0;
 
-vx_cum=[];
-vy_cum=[];
-vz_cum=[];
+    d_x = 0;
+    d_y = 0;
+    d_z = 0;
 
-x_cum=[];
-y_cum=[];
-z_cum=[];
+    res.x_vel = [0];
+    res.y_vel = [0];
+    res.z_vel = [0];
 
-v_x_mod=0;
-v_x_mod_tmp = 0;
-v_y_mod=0;
-v_z_mod=0;
+    res.x_dis = [0];
+    res.y_dis = [0];
+    res.z_dis = [0];
 
-vx_cum_mod=[];
-vy_cum_mod=[];
-vz_cum_mod=[];
+%     if (is_rm_ave ~= 0)
+        struct.x_acc = struct.x_acc - struct.x_acc_ave .* ones(struct.vec_len, 1);
+        struct.y_acc = struct.y_acc - struct.y_acc_ave .* ones(struct.vec_len, 1);
+        struct.z_acc = struct.z_acc - struct.z_acc_ave .* ones(struct.vec_len, 1);
+%     end
 
-x_cum_mod=[];
-y_cum_mod=[];
-z_cum_mod=[];
 
-x=0;
-y=0;
-z=0;
-x_mod = 0;
-y_mod = 0;
-z_mod = 0;
+    for i = 1 : struct.vec_len - 1
+        v_x = v_x + struct.x_acc(i) / 200 + struct.x_acc(i + 1) / 200;
+        v_y = v_y + struct.y_acc(i) / 200 + struct.y_acc(i + 1) / 200;
+        v_z = v_z + struct.z_acc(i) / 200 + struct.z_acc(i + 1) / 200;
+        res.x_vel = [res.x_vel; v_x];
+        res.y_vel = [res.y_vel; v_y];
+        res.z_vel = [res.z_vel; v_z];
 
-for i =1:size(acce_x)
-    v_x=v_x+acce_x(i,1)*1/720;
-    x=x+v_x*1/720;
-    vx_cum=[vx_cum ,v_x];
-    x_cum=[x_cum,x];
-    
-%     v_y=v_y+acce_y(i,1)*1/100;
-%     y=y+v_y*1/100;
-%     vy_cum=[vy_cum ,v_y];
-%     y_cum=[y_cum,y];
-%     
-%     v_z=v_z+acce_z(i,1)*1/100;
-%     z=z+v_z*1/100;
-%     vz_cum=[vz_cum ,v_z];
-%     z_cum=[z_cum,z];
-end
-
-for i =1:size(acce_x_mod) - 1
-    if (acce_x_mod > 0.1)
-        acce_x_mod  = 0.1;
-    elseif (acce_x_mod < -0.1)
-        acce_x_mod = -0.1;
+        d_x = d_x + res.x_vel(i) / 200 + res.x_vel(i) / 200;
+        res.x_dis = [res.x_dis, d_x];
+        d_y = d_y + res.y_vel(i) / 200 + res.y_vel(i) / 200;
+        res.y_dis = [res.y_dis, d_y];
+        d_z = d_z + res.z_vel(i) / 200 + res.z_vel(i) / 200;
+        res.z_dis = [res.z_dis, d_z];
     end
-    v_x_mod_tmp = v_x_mod;
-    v_x_mod=v_x_mod+acce_x_mod(i,1)*1/720 + acce_x_mod(i + 1, 1) / 720;
-    x_mod=x_mod + v_x_mod / 720 + v_x_mod_tmp / 720;
-    vx_cum_mod=[vx_cum_mod ,v_x_mod];
-    x_cum_mod=[x_cum_mod,x_mod];
     
-%     v_y_mod=v_y_mod+acce_y_mod(i,1)*1/100;
-%     y_mod=y_mod+v_y_mod*1/100;
-%     vy_cum_mod=[vy_cum_mod ,v_y_mod];
-%     y_cum_mod=[y_cum_mod,y_mod];
-%     
-%     v_z_mod=v_z_mod+acce_z_mod(i,1)*1/100;
-%     z_mod=z_mod+v_z_mod*1/100;
-%     vz_cum_mod=[vz_cum_mod ,v_z_mod];
-%     z_cum_mod=[z_cum_mod,z_mod];
+    figure(1);
+    subplot(3, 1, 1);
+    plot(res.x_vel);
+    set(gca, 'xTick', [0 : 6000 : struct.vec_len]);
+    set(gca, 'xTickLabel', {'0', '1', '2', '3', '4', '5'});
+    ylabel('m/s');
+    title('x轴速度随时间变化的曲线');
+
+    
+    subplot(3, 1, 2);
+    plot(res.y_vel);
+    set(gca, 'xTick', [0 : 6000 : struct.vec_len]);
+    set(gca, 'xTickLabel', {'0', '1', '2', '3', '4', '5'});
+    ylabel('m/s');
+    title('y轴速度随时间变化的曲线');
+
+    
+    subplot(3, 1, 3);
+    plot(res.z_vel);
+    set(gca, 'xTick', [0 : 6000 : struct.vec_len]);
+    set(gca, 'xTickLabel', {'0', '1', '2', '3', '4', '5'});
+    ylabel('m/s');
+    title('z轴速度随时间变化的曲线');
+
+    
+    figure(2);
+    
+    subplot(3, 1, 1);
+    plot(res.x_dis);
+    set(gca, 'xTick', [0 : 6000 : struct.vec_len]);
+    set(gca, 'xTickLabel', {'0', '1', '2', '3', '4', '5'});
+    xlabel('min');
+    ylabel('m');
+    title('x轴位移随时间变化的曲线');
+
+    
+    subplot(3, 1, 2);
+    plot(res.y_dis);
+    set(gca, 'xTick', [0 : 6000 : struct.vec_len]);
+    set(gca, 'xTickLabel', {'0', '1', '2', '3', '4', '5'});
+    xlabel('min');
+    ylabel('m/s');
+    title('y轴位移随时间变化的曲线');
+
+    
+    subplot(3, 1, 3);
+    plot(res.z_dis);
+    set(gca, 'xTick', [0 : 6000 : struct.vec_len]);
+    set(gca, 'xTickLabel', {'0', '1', '2', '3', '4', '5'});
+    xlabel('min');
+    ylabel('m/s');
+    title('z轴位移随时间变化的曲线');
+
+        
+   
 end
 
 
