@@ -18,6 +18,7 @@
 
 
 function [res] = imu_get_vel_dis(struct)
+    res = struct;
     v_x = 0;
     v_y = 0;
     v_z = 0;
@@ -41,7 +42,7 @@ function [res] = imu_get_vel_dis(struct)
 % end
 % 
 
-    for i = 1 : vec_len - 1
+    for i = 1 : struct.vec_len - 1
     %     v_x = v_x + x_acc(i) / 200 + x_acc(i + 1) / 200;
         v_x = v_x + struct.x_acc(i) / 200 + struct.x_acc(i + 1) / 200;
         v_y = v_y + struct.y_acc(i) / 200 + struct.y_acc(i + 1) / 200;
@@ -51,11 +52,11 @@ function [res] = imu_get_vel_dis(struct)
         res.z_vel = [res.z_vel; v_z];
 
         d_x = d_x + res.x_vel(i) / 200 + res.x_vel(i) / 200;
-        res.x_dis = [res.x_dis, d_x];
+        res.x_dis = [res.x_dis; d_x];
         d_y = d_y + res.y_vel(i) / 200 + res.y_vel(i) / 200;
-        res.y_dis = [res.y_dis, d_y];
+        res.y_dis = [res.y_dis; d_y];
         d_z = d_z + res.z_vel(i) / 200 + res.z_vel(i) / 200;
-        res.z_dis = [res.z_dis, d_z];
+        res.z_dis = [res.z_dis;d_z];
     end
         
         

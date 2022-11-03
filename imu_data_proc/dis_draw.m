@@ -38,8 +38,9 @@
 
 function [] = dis_draw(draw_mask, res)
     [mode, mask_mat] = mask2mat(draw_mask);
+    
     % 将所有数据以矩阵形式表示，方便灵活使用
-    all_data = [res.x_vel, res.y_vel, res.z_vel, res.x_dis, res.y_dis, res.z_dis];
+    all_data = [res.x_vel, res.y_vel, res.z_vel, res.x_dis, res.y_dis, res.z_dis, res.pitch, res.roll, res.yaw];
     fprintf("载入数据成功，开始绘制相应图线。\n");
     ylabel_vec = ['m/s'; 'm';"°"];
     str_vec = ['X';'Y';'Z'];
@@ -66,7 +67,7 @@ function [] = dis_draw(draw_mask, res)
                         end
                         %绘制图线并标好单位
                         plot(all_data(:,(x-1)*3+y));
-                        set(gca, 'xTick', [0: 6000:  struct.vec_len]);
+                        set(gca, 'xTick', [0: 6000:  res.vec_len]);
                         set(gca,'xTickLabel',{'0','1','2','3','4','5'});
                         xlabel('min'); ylabel(ylabel_vec(x));title(str_vec(y)+"轴"+val_vec(x)+"随时间变化的曲线") ;                
                 end
@@ -85,14 +86,18 @@ end
 % 输出变量：
 % mask_mat = 输出的掩码二进制矩阵，三行分别表示加速度、角速度、角度对应的二进制掩码。
 function [mode,mask_mat]=mask2mat(mask)
-    mask_bin=dec2bin(mask);
+    mask_bin = dec2bin(mask, 16);
+    % 将第9位到12位置零
+    for i = 5 : 8
+        mask_bin(i) = '0';
+    end
     %将掩码补到16位
     while length(mask_bin)<16
         mask_bin=['0',mask_bin];
     end
     %将最高位转为mode
     mode=str2double(mask_bin(1));
-    mask_mat=zeros(3,3);
+    mask_mat=zeros(3,3); 
     %依次转换每行掩码
     for row = 1:3
         row_bin= mask_bin(17-4*row:20-4*row);

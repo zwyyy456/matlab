@@ -9,21 +9,22 @@
 % 
 function [raw_struct, mod_struct] = imu_process_data(struct, is_rm_ave, filter_type)
     raw_struct = struct;
+    mod_struct = struct;
     if (is_rm_ave ~= 0)
-        mod_struct.x_acc = struct.x_acc - struct.x_acc_ave .* ones(vec_len, 1);
-        mod_struct.y_acc = struct.y_acc - struct.y_acc_ave .* ones(vec_len, 1);
-        mod_struct.z_acc = struct.z_acc - struct.z_acc_ave .* ones(vec_len, 1);
+        mod_struct.x_acc = struct.x_acc - struct.x_acc_ave .* ones(struct.vec_len, 1);
+        mod_struct.y_acc = struct.y_acc - struct.y_acc_ave .* ones(struct.vec_len, 1);
+        mod_struct.z_acc = struct.z_acc - struct.z_acc_ave .* ones(struct.vec_len, 1);
     end
     
-    if (m_filter == 1)
+    if (filter_type == 1)
         mod_struct.x_acc = movmean(struct.x_acc, 10);
         mod_struct.y_acc = movmean(struct.y_acc, 10);
         mod_struct.z_acc = movmean(struct.z_acc, 10);
-    elseif (m_filter == 2)
+    elseif (filter_type == 2)
         mod_struct.x_acc = movmedian(struct.x_acc, 10);
         mod_struct.y_acc = movmedian(struct.y_acc, 10);
         mod_struct.z_acc = movmedian(struct.z_acc, 10);
-    elseif (m_filter == 3)
+    elseif (filter_type == 3)
         mod_struct.x_acc = smoothdata(struct.x_acc, 'gaussian', 20);
         mod_struct.y_acc = smoothdata(struct.y_acc, 'gaussian', 20);
         mod_struct.z_acc = smoothdata(struct.z_acc, 'gaussian', 20);
